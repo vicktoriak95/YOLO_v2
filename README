@@ -1,0 +1,65 @@
+################## Configure Conda Environment ##################
+cd FinalProject_Yolo
+conda create --name yolo
+activate yolo
+conda install python=3.6
+conda install numpy=1.19.1
+conda install tensorflow=1.14.0 -c conda-forge
+conda install keras=2.3.1 -c conda-forge
+conda install pillow=7.2.0 -c conda-forge
+
+
+################## Download Pre-Trained Model ##################
+Enter the following link and download the yolo.h5 file (~200MB) and place it in the \model_data folder
+https://drive.google.com/file/d/1JHctc4Qm74E6dNKmjniE1mxk1_CgYv4k/view?usp=sharing
+
+################## Run Examples ##################
+python main.py
+python main.py --db crowd
+python main.py --db inria
+python main.py --db crowd --no-draw --score_threshold 0.5 
+python main.py --db inria --no-draw --score_threshold 0.5 
+
+
+################## Argument Explanation ##################
+
+--db
+
+The database upon which the yolo will run. 
+If non mentioned - the program will run on all images in the /images folder and draw the detected objects in the /images/out folder. 
+
+Notice! Accuracy of the model can only be evaluated if ground-truth is provided. 
+Thus, if no db is mentioned, there is no ground-truth and therefore no model evaluation. 
+
+Currently supported DBs are "crowd" and "inria" (please see databases.py)
+If used --db crowd the program will run on all images in the /databases/CrowdHuman_val/Images folder and draw the detected objects in the /databases/CrowdHuman_val/Images/out folder. 
+If used --db crowd the program will run on all images in the /databases/INRIAPerson/images folder and draw the detected objects in the /databases/INRIAPerson/images/out folder. 
+Notice! Since the databases are of huge size, I only kept a few pictures in the databases folders for convenience. 
+In order to reproduce the same results - one must first download the databases into the respective folders:
+crowd	- \databases\CrowdHuman_val\Images	- https://www.crowdhuman.org/
+inria 	- \databases\INRIAPerson\images		- http://pascal.inrialpes.fr/data/human/
+
+
+--model_path
+--anchors_path
+--classes_path
+These paths are of the .h5 model (pre-trained), the anchors and the classes paths respectively.
+The default paths are of the pre-trained model I ran my tests upon.
+
+
+--no-draw
+If set the program will not draw output pictures with the detected objects.
+Relevant only if a db is given and you are interested solely in the model evaluation measurements. 
+
+--score_threshold
+The model will predict only objects with certainty >= score_threshold. 
+Notice! Increasing the threshold will cause a better accuracy but worse recall. 
+
+--iou_threshold
+Two detected objects will be considered a duplication as they detect the same object if their IOU >= iou_threshold
+
+
+################## References ##################
+
+The mAP, precision and recall are calculated using the following repository:
+https://github.com/Cartucho/mAP
